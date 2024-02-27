@@ -15,8 +15,8 @@ export default function Home() {
       <Header />
       <main className="">
         <div className="banner min-h-screen">
-          <div className="md:container mx-auto flex justify-center h-screen gap-x-16">
-            <div className="flex justify-center flex-col columns-xs w-3/4">
+          <div className="md:container mx-auto flex flex-col lg:flex-row justify-center h-screen gap-x-16 gap-y-16 lg:gap-y-0 pt-32 lg:pt-0 px-8">
+            <div className="flex justify-center flex-col columns-xs lg:w-3/4">
               <h1 className="pb-4 text-5xl">Lorem Ipsum</h1>
               <p>
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus quidem, quod deleniti nulla atque molestias omnis officiis porro repellendus dolore harum quis, sapiente voluptatem soluta ea laboriosam earum dolores aspernatur.  
