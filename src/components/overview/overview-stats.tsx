@@ -7,6 +7,21 @@ interface OverviewStatsProps {
   summaries: SiteSummary[];
 }
 
+type StatColor = 'success' | 'warning' | 'danger' | 'info';
+
+interface StatItem {
+  label: string;
+  value: number;
+  total?: number;
+  percentage?: number;
+  suffix?: string;
+  icon: React.ReactNode;
+  color: StatColor;
+  trend?: string;
+  showRing?: boolean;
+  pulse?: boolean;
+}
+
 export function OverviewStats({ summaries }: OverviewStatsProps) {
   const totalSites = summaries.length;
   const sitesOnline = summaries.filter((s) => s.status === 'online').length;
@@ -17,7 +32,7 @@ export function OverviewStats({ summaries }: OverviewStatsProps) {
   const onlinePercentage = totalSites > 0 ? (sitesOnline / totalSites) * 100 : 0;
   const healthScore = totalSites > 0 ? ((sitesOnline - totalOutdated * 0.5) / totalSites) * 100 : 0;
 
-  const stats = [
+  const stats: StatItem[] = [
     {
       label: 'Sites Online',
       value: sitesOnline,
@@ -34,7 +49,7 @@ export function OverviewStats({ summaries }: OverviewStatsProps) {
           />
         </svg>
       ),
-      color: 'success' as const,
+      color: 'success',
       trend: '+2.5%',
     },
     {
@@ -52,7 +67,7 @@ export function OverviewStats({ summaries }: OverviewStatsProps) {
           />
         </svg>
       ),
-      color: healthScore > 75 ? 'success' : healthScore > 50 ? 'warning' : ('danger' as const),
+      color: (healthScore > 75 ? 'success' : healthScore > 50 ? 'warning' : 'danger') as StatColor,
       showRing: true,
     },
     {
@@ -69,7 +84,7 @@ export function OverviewStats({ summaries }: OverviewStatsProps) {
           />
         </svg>
       ),
-      color: totalOutdated > 0 ? 'warning' : ('success' as const),
+      color: (totalOutdated > 0 ? 'warning' : 'success') as StatColor,
       trend: totalOutdated > 0 ? `-${totalOutdated}` : '0',
     },
     {
@@ -86,7 +101,7 @@ export function OverviewStats({ summaries }: OverviewStatsProps) {
           />
         </svg>
       ),
-      color: 'info' as const,
+      color: 'info',
       trend: '+12',
     },
     {
@@ -103,12 +118,12 @@ export function OverviewStats({ summaries }: OverviewStatsProps) {
           />
         </svg>
       ),
-      color: totalPending > 5 ? 'warning' : ('info' as const),
+      color: (totalPending > 5 ? 'warning' : 'info') as StatColor,
       pulse: totalPending > 0,
     },
   ];
 
-  const getColorClass = (color: 'success' | 'warning' | 'danger' | 'info') => {
+  const getColorClass = (color: StatColor) => {
     const colors = {
       success: 'text-success',
       warning: 'text-warning',
@@ -118,24 +133,15 @@ export function OverviewStats({ summaries }: OverviewStatsProps) {
     return colors[color];
   };
 
-  const getGlowClass = (color: 'success' | 'warning' | 'danger' | 'info') => {
-    const glows = {
-      success: 'glow-success',
-      warning: 'glow-warning',
-      danger: 'glow-danger',
-      info: 'glow-accent',
-    };
-    return glows[color];
-  };
-
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-      {stats.map((stat, i) => (
-        <div
-          key={stat.label}
-          className={`card-elevated p-6 group hover:${getGlowClass(stat.color)}`}
-          style={{ animationDelay: `${i * 0.1}s` }}
-        >
+      {stats.map((stat, i) => {
+        return (
+          <div
+            key={stat.label}
+            className="card-elevated p-6 group"
+            style={{ animationDelay: `${i * 0.1}s` }}
+          >
           {/* Icon & Trend */}
           <div className="flex items-start justify-between mb-4">
             <div className={`p-2 rounded-lg bg-[var(--bg-tertiary)] ${getColorClass(stat.color)} transition-transform group-hover:scale-110`}>
@@ -183,7 +189,8 @@ export function OverviewStats({ summaries }: OverviewStatsProps) {
             {stat.label}
           </div>
         </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

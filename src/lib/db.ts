@@ -95,5 +95,5 @@ export async function deleteSite(id: number): Promise<boolean> {
   await ensureInitialized();
   const sql = getSql();
   const result = await sql`DELETE FROM sites WHERE id = ${id}`;
-  return result.count > 0;
+  return (result as any).count > 0;
 }

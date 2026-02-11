@@ -10,7 +10,8 @@
       "Bash(DATABASE_URL=\"postgresql://neondb_owner:npg_S0lvYUKiCN1I@ep-little-credit-acnq50zg-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\" node:*)",
       "Bash(timeout 10 npm run dev:*)",
       "Bash(curl:*)",
-      "WebFetch(domain:localhost)"
+      "WebFetch(domain:localhost)",
+      "Bash(npm run build:*)"
     ],
     "additionalDirectories": [
       "c:\\workspace\\Alef\\Ideias Alef\\plugin_f2f\\f2f-dashboard-next"
