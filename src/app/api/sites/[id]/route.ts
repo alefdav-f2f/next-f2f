@@ -7,7 +7,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const site = getSiteById(Number(id));
+    const site = await getSiteById(Number(id));
     if (!site) {
       return NextResponse.json({ error: 'Site not found' }, { status: 404 });
     }
@@ -25,7 +25,7 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    const site = updateSite(Number(id), body);
+    const site = await updateSite(Number(id), body);
     if (!site) {
       return NextResponse.json({ error: 'Site not found' }, { status: 404 });
     }
@@ -42,7 +42,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const success = deleteSite(Number(id));
+    const success = await deleteSite(Number(id));
     if (!success) {
       return NextResponse.json({ error: 'Site not found' }, { status: 404 });
     }

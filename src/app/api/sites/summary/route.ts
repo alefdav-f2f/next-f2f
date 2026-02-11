@@ -5,7 +5,7 @@ import type { SiteSummary } from '@/lib/types';
 
 export async function GET() {
   try {
-    const sites = getAllSites();
+    const sites = await getAllSites();
 
     const summaryPromises = sites.map(async (site): Promise<SiteSummary> => {
       const summary = await getSiteSummary(site);

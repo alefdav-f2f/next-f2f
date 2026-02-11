@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Alares Investidores",
+    "url": "http://alaresinvestidores.local",
+    "token": "e3e5e1bd9b0dd60de731c8d219822047fef83aa874532c191adb675eb7c6cb15",
+    "created_at": "2026-02-11 02:43:53",
+    "updated_at": "2026-02-11 02:43:53"
+  },
+  {
+    "id": 2,
+    "name": "GLP Homolog",
+    "url": "https://glp.homolog-f2f-digital.xyz",
+    "token": "af6816f7f0871eeff00151b417f4d1ba5011302fae0d63f65ea4a334f511b2ed",
+    "created_at": "2026-02-11 16:44:28",
+    "updated_at": "2026-02-11 16:44:28"
+  },
+  {
+    "id": 3,
+    "name": "Black Alares",
+    "url": "https://black-alares.homolog-f2f-digital.xyz",
+    "token": "54b57dfd26187884371e1f6e86af478b98893b4cd0fd73d8edac237b0bb424cb",
+    "created_at": "2026-02-11 16:50:17",
+    "updated_at": "2026-02-11 16:50:17"
+  }
+]

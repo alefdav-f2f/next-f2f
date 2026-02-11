@@ -22,7 +22,10 @@ export function QueueStats({ queue }: QueueStatsProps) {
     return <EmptyState message="Nenhuma tarefa na fila" />;
   }
 
-  const total = queue.reduce((sum, q) => sum + (typeof q.count === 'number' ? q.count : parseInt(String(q.count), 10)), 0);
+  const total = queue.reduce((sum, q) => {
+    const count = typeof q.count === 'number' ? q.count : parseInt(String(q.count) || '0', 10);
+    return sum + (isNaN(count) ? 0 : count);
+  }, 0);
 
   if (total === 0) {
     return <EmptyState message="Fila vazia - nenhuma tarefa pendente" />;
@@ -34,7 +37,8 @@ export function QueueStats({ queue }: QueueStatsProps) {
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {queue.map((item) => {
           const config = statusConfig[item.status] || statusConfig.pending;
-          const count = typeof item.count === 'number' ? item.count : parseInt(String(item.count), 10);
+          const count = typeof item.count === 'number' ? item.count : parseInt(String(item.count) || '0', 10);
+          const safeCount = isNaN(count) ? 0 : count;
           return (
             <div
               key={item.status}
@@ -42,7 +46,7 @@ export function QueueStats({ queue }: QueueStatsProps) {
             >
               <Badge variant={config.variant}>{config.label}</Badge>
               <div className="mt-3 gradient-text text-3xl font-bold font-heading">
-                {count}
+                {safeCount}
               </div>
             </div>
           );
@@ -57,14 +61,15 @@ export function QueueStats({ queue }: QueueStatsProps) {
         <div className="space-y-4">
           {queue.map((item) => {
             const config = statusConfig[item.status] || statusConfig.pending;
-            const count = typeof item.count === 'number' ? item.count : parseInt(String(item.count), 10);
-            const percentage = total > 0 ? (count / total) * 100 : 0;
+            const count = typeof item.count === 'number' ? item.count : parseInt(String(item.count) || '0', 10);
+            const safeCount = isNaN(count) ? 0 : count;
+            const percentage = total > 0 ? (safeCount / total) * 100 : 0;
 
             return (
               <div key={item.status} className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Badge variant={config.variant}>{config.label}</Badge>
-                  <span className="text-sm font-medium text-[var(--text-primary)]">{count}</span>
+                  <span className="text-sm font-medium text-[var(--text-primary)]">{safeCount}</span>
                 </div>
                 <ProgressBar value={percentage} variant={config.progressVariant} />
               </div>

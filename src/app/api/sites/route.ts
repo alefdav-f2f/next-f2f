@@ -3,7 +3,7 @@ import { getAllSites, createSite } from '@/lib/db';
 
 export async function GET() {
   try {
-    const sites = getAllSites();
+    const sites = await getAllSites();
     return NextResponse.json(sites);
   } catch (error) {
     console.error('Error fetching sites:', error);
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const site = createSite({ name, url, token });
+    const site = await createSite({ name, url, token });
     return NextResponse.json(site, { status: 201 });
   } catch (error) {
     console.error('Error creating site:', error);

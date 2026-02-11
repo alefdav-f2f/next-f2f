@@ -8,7 +8,7 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
-    const site = getSiteById(Number(id));
+    const site = await getSiteById(Number(id));
     if (!site) {
       return NextResponse.json({ error: 'Site not found' }, { status: 404 });
     }

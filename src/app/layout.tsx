@@ -1,26 +1,26 @@
 import type { Metadata } from 'next';
-import { Epilogue, Inter, JetBrains_Mono } from 'next/font/google';
+import { Sora, Inter, JetBrains_Mono } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme/theme-provider';
 import { AppShell } from '@/components/layout/app-shell';
 import './globals.css';
 
-const epilogue = Epilogue({
+const sora = Sora({
   subsets: ['latin'],
-  weight: ['500', '700'],
-  variable: '--font-epilogue',
+  weight: ['300', '400', '600', '700', '800'],
+  variable: '--font-sora',
   display: 'swap',
 });
 
 const inter = Inter({
   subsets: ['latin'],
-  weight: ['400', '500'],
+  weight: ['300', '400', '500', '600', '700'],
   variable: '--font-inter',
   display: 'swap',
 });
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
-  weight: ['400'],
+  weight: ['400', '500', '600'],
   variable: '--font-jetbrains',
   display: 'swap',
 });
@@ -39,7 +39,7 @@ export default function RootLayout({
     <html
       lang="pt-BR"
       suppressHydrationWarning
-      className={`${epilogue.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+      className={`${sora.variable} ${inter.variable} ${jetbrainsMono.variable}`}
     >
       <body className="min-h-screen antialiased">
         <ThemeProvider>

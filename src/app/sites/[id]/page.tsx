@@ -60,7 +60,7 @@ export default function SiteDetailPage({ params }: { params: Promise<{ id: strin
   const isLoading = versionsLoading || activityLoading || queueLoading;
 
   return (
-    <div>
+    <div className="space-y-8 py-8">
       <Topbar
         title={tabTitles[activeTab]}
         lastRefresh={lastRefresh}
@@ -68,7 +68,7 @@ export default function SiteDetailPage({ params }: { params: Promise<{ id: strin
         isRefreshing={isRefreshing}
       />
 
-      <div className="space-y-6 p-6 lg:p-8">
+      <div className="space-y-6">
         {site && <SiteHeader site={site} />}
 
         {!isLoading && (

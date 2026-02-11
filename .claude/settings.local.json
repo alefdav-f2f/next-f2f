@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(sqlite3:*)",
+      "Bash(node -p:*)",
+      "Bash(node scripts/export-sqlite-data.js:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(node scripts/migrate-to-neon.js:*)",
+      "Bash(DATABASE_URL=\"postgresql://neondb_owner:npg_S0lvYUKiCN1I@ep-little-credit-acnq50zg-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require\" node:*)",
+      "Bash(timeout 10 npm run dev:*)",
+      "Bash(curl:*)",
+      "WebFetch(domain:localhost)"
+    ],
+    "additionalDirectories": [
+      "c:\\workspace\\Alef\\Ideias Alef\\plugin_f2f\\f2f-dashboard-next"
+    ]
+  }
+}

@@ -1,70 +1,99 @@
-import Database from 'better-sqlite3';
-import path from 'path';
+import { neon, NeonQueryFunction } from '@neondatabase/serverless';
 import type { Site, SiteFormData } from './types';
 
-const DB_PATH = process.env.DATABASE_PATH || './data/f2f-monitor.db';
+let sql: NeonQueryFunction<false, false> | null = null;
 
-function getDb(): Database.Database {
-  const globalAny = globalThis as typeof globalThis & { __db?: Database.Database };
-
-  if (!globalAny.__db) {
-    const dbPath = path.resolve(DB_PATH);
-    globalAny.__db = new Database(dbPath);
-    globalAny.__db.pragma('journal_mode = WAL');
-
-    globalAny.__db.exec(`
-      CREATE TABLE IF NOT EXISTS sites (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        url TEXT NOT NULL,
-        token TEXT NOT NULL,
-        created_at TEXT DEFAULT (datetime('now')),
-        updated_at TEXT DEFAULT (datetime('now'))
-      )
-    `);
+function getSql(): NeonQueryFunction<false, false> {
+  if (!sql) {
+    const connectionString = process.env.DATABASE_URL;
+    if (!connectionString) {
+      throw new Error('DATABASE_URL environment variable is not set');
+    }
+    sql = neon(connectionString);
   }
-
-  return globalAny.__db;
+  return sql;
 }
 
-export function getAllSites(): Site[] {
-  const db = getDb();
-  return db.prepare('SELECT * FROM sites ORDER BY name ASC').all() as Site[];
+// Initialize table on first connection
+let initialized = false;
+async function ensureInitialized(): Promise<void> {
+  if (initialized) return;
+
+  const sql = getSql();
+  await sql`
+    CREATE TABLE IF NOT EXISTS sites (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      url VARCHAR(2048) NOT NULL,
+      token VARCHAR(512) NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `;
+
+  await sql`CREATE INDEX IF NOT EXISTS idx_sites_name ON sites(name)`;
+
+  initialized = true;
 }
 
-export function getSiteById(id: number): Site | undefined {
-  const db = getDb();
-  return db.prepare('SELECT * FROM sites WHERE id = ?').get(id) as Site | undefined;
+export async function getAllSites(): Promise<Site[]> {
+  await ensureInitialized();
+  const sql = getSql();
+  const result = await sql`SELECT * FROM sites ORDER BY name ASC`;
+  return result as Site[];
 }
 
-export function createSite(data: SiteFormData): Site {
-  const db = getDb();
+export async function getSiteById(id: number): Promise<Site | undefined> {
+  await ensureInitialized();
+  const sql = getSql();
+  const result = await sql`SELECT * FROM sites WHERE id = ${id}`;
+  return result[0] as Site | undefined;
+}
+
+export async function createSite(data: SiteFormData): Promise<Site> {
+  await ensureInitialized();
+  const sql = getSql();
   const url = data.url.replace(/\/+$/, '');
-  const stmt = db.prepare(
-    'INSERT INTO sites (name, url, token) VALUES (?, ?, ?)'
-  );
-  const result = stmt.run(data.name, url, data.token);
-  return getSiteById(result.lastInsertRowid as number) as Site;
+
+  const result = await sql`
+    INSERT INTO sites (name, url, token)
+    VALUES (${data.name}, ${url}, ${data.token})
+    RETURNING *
+  `;
+
+  return result[0] as Site;
 }
 
-export function updateSite(id: number, data: Partial<SiteFormData>): Site | undefined {
-  const db = getDb();
-  const site = getSiteById(id);
+export async function updateSite(
+  id: number,
+  data: Partial<SiteFormData>
+): Promise<Site | undefined> {
+  await ensureInitialized();
+  const sql = getSql();
+
+  const site = await getSiteById(id);
   if (!site) return undefined;
 
   const name = data.name ?? site.name;
   const url = data.url ? data.url.replace(/\/+$/, '') : site.url;
   const token = data.token ?? site.token;
 
-  db.prepare(
-    "UPDATE sites SET name = ?, url = ?, token = ?, updated_at = datetime('now') WHERE id = ?"
-  ).run(name, url, token, id);
+  const result = await sql`
+    UPDATE sites
+    SET name = ${name},
+        url = ${url},
+        token = ${token},
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = ${id}
+    RETURNING *
+  `;
 
-  return getSiteById(id);
+  return result[0] as Site | undefined;
 }
 
-export function deleteSite(id: number): boolean {
-  const db = getDb();
-  const result = db.prepare('DELETE FROM sites WHERE id = ?').run(id);
-  return result.changes > 0;
+export async function deleteSite(id: number): Promise<boolean> {
+  await ensureInitialized();
+  const sql = getSql();
+  const result = await sql`DELETE FROM sites WHERE id = ${id}`;
+  return result.count > 0;
 }

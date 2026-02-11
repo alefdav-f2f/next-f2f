@@ -101,7 +101,7 @@ export async function getQueueStatus(site: Site): Promise<QueueStatusItem[]> {
     // If it's an object like { pending: 5, processing: 2, ... }, convert to array
     items = Object.entries(data).map(([status, count]) => ({
       status: status as QueueStatusItem['status'],
-      count: typeof count === 'string' ? parseInt(count, 10) : Number(count),
+      count: typeof count === 'string' ? parseInt(count || '0', 10) : Number(count) || 0,
     }));
   } else {
     items = [];
@@ -109,7 +109,9 @@ export async function getQueueStatus(site: Site): Promise<QueueStatusItem[]> {
 
   return items.map(item => ({
     ...item,
-    count: typeof item.count === 'string' ? parseInt(String(item.count), 10) : item.count,
+    count: typeof item.count === 'string'
+      ? parseInt(String(item.count) || '0', 10)
+      : (typeof item.count === 'number' ? item.count : 0),
   }));
 }
 

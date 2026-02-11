@@ -42,7 +42,7 @@ export default function ManageSitesPage() {
   };
 
   return (
-    <div>
+    <div className="space-y-8 py-8">
       <Topbar
         title="Gerenciar Sites"
         actions={
@@ -55,21 +55,19 @@ export default function ManageSitesPage() {
         }
       />
 
-      <div className="p-6 lg:p-8">
-        {isLoading ? (
-          <div className="space-y-3">
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-          </div>
-        ) : (
-          <SiteList
-            sites={sites}
-            onEdit={(site) => setEditingSite(site)}
-            onDelete={(site) => setDeletingSite(site)}
-          />
-        )}
-      </div>
+      {isLoading ? (
+        <div className="space-y-3">
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
+        </div>
+      ) : (
+        <SiteList
+          sites={sites}
+          onEdit={(site) => setEditingSite(site)}
+          onDelete={(site) => setDeletingSite(site)}
+        />
+      )}
 
       {/* Add Site Modal */}
       <Modal
